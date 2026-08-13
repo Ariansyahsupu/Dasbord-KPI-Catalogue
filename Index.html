@@ -574,13 +574,21 @@
 
                 // Trend mapping (using Date as key)
                 if (row['Timestamp']) {
-                    const dateStr = row['Timestamp'].split(' ')[0]; // extract just YYYY-MM-DD
-                    if (!trendData[dateStr]) {
-                        trendData[dateStr] = { sum: 0, count: 0 };
-                    }
-                    if (!isNaN(resTime)) {
-                        trendData[dateStr].sum += resTime;
-                        trendData[dateStr].count++;
+                    const parsedDate = parseCustomDate(row['Timestamp']);
+                    if (!isNaN(parsedDate)) {
+                        // Memaksa format menjadi YYYY-MM-DD murni agar sorting teks berjalan sempurna berdasarkan waktu
+                        const yyyy = parsedDate.getFullYear();
+                        const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+                        const dd = String(parsedDate.getDate()).padStart(2, '0');
+                        const dateKey = `${yyyy}-${mm}-${dd}`;
+
+                        if (!trendData[dateKey]) {
+                            trendData[dateKey] = { sum: 0, count: 0 };
+                        }
+                        if (!isNaN(resTime)) {
+                            trendData[dateKey].sum += resTime;
+                            trendData[dateKey].count++;
+                        }
                     }
                 }
             });
@@ -625,9 +633,13 @@
         function renderCharts(trendData, deptCounts) {
             // Prepare Trend Chart Data
             const sortedDates = Object.keys(trendData).sort();
-            const trendLabels = sortedDates.map(date => {
-                const d = new Date(date);
-                return `${d.getDate()}/${d.getMonth()+1}`;
+            const trendLabels = sortedDates.map(dateStr => {
+                // Memecah format YYYY-MM-DD murni dari proses sebelumnya tanpa new Date()
+                const parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    return `${parseInt(parts[2], 10)}/${parseInt(parts[1], 10)}`; 
+                }
+                return dateStr;
             });
             const trendValues = sortedDates.map(date => {
                 return trendData[date].count > 0 ? (trendData[date].sum / trendData[date].count).toFixed(1) : 0;

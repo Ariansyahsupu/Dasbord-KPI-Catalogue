@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPI Dashboard - Create Material</title>
+    <title>KPI Dashboard - Enterprise Edition</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,61 +24,89 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        corporate: {
-                            50: '#f0f4f8',
-                            100: '#d9e2ec',
-                            500: '#334e68',
-                            600: '#243b53',
-                            900: '#102a43',
+                        saas: {
+                            bg: '#FAFAFA',
+                            border: '#EAEAEA',
+                            textMain: '#111827',
+                            textMuted: '#6B7280',
+                            accent: '#000000',
+                            accentHover: '#374151'
                         }
+                    },
+                    boxShadow: {
+                        'saas': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                        'saas-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; }
-        .glass-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #FAFAFA; 
+            color: #111827;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .table-container { overflow-y: auto; max-height: 400px; }
         
-        /* Custom Scrollbar for sleek look */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Clean Enterprise Card */
+        .saas-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #EAEAEA;
+            transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .saas-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .table-container { overflow-y: auto; max-height: 450px; }
+        
+        /* Minimalist Mac-like Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
         
         .loader {
-            border-top-color: #3b82f6;
-            -webkit-animation: spinner 1.5s linear infinite;
-            animation: spinner 1.5s linear infinite;
+            border-top-color: #111827;
+            -webkit-animation: spinner 1s linear infinite;
+            animation: spinner 1s linear infinite;
         }
         @keyframes spinner {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Form elements reset for cleaner look */
+        select, input {
+            transition: all 0.2s ease;
+        }
+        select:focus, input:focus {
+            border-color: #111827 !important;
+            box-shadow: 0 0 0 1px #111827 !important;
+            outline: none;
+        }
     </style>
 </head>
-<body class="text-slate-800 antialiased">
+<body class="antialiased">
 
-    <!-- Navbar -->
-    <nav class="bg-corporate-900 text-white shadow-lg sticky top-0 z-50">
+    <!-- Navbar: Minimalist & White (Vercel/Stripe style) -->
+    <nav class="bg-white border-b border-saas-border sticky top-0 z-50/80 backdrop-blur-md bg-white/90">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center gap-3">
-                        <i class="fas fa-boxes text-blue-400 text-2xl"></i>
-                        <span class="font-bold text-xl tracking-tight">Catalogue Management</span>
+                <div class="flex items-center gap-3">
+                    <div class="h-8 w-8 bg-black rounded-lg flex items-center justify-center">
+                        <i class="fas fa-layer-group text-white text-sm"></i>
                     </div>
+                    <span class="font-semibold text-lg tracking-tight text-gray-900">Catalogue Ops</span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span id="lastUpdated" class="text-xs text-corporate-100 hidden sm:block"></span>
-                    <button onclick="loadData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
-                        <i class="fas fa-sync-alt"></i> Refresh Data
+                    <span id="lastUpdated" class="text-xs text-gray-500 hidden sm:block font-medium"></span>
+                    <button onclick="loadData()" class="bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
+                        <i class="fas fa-sync-alt text-xs"></i> Sync
                     </button>
                 </div>
             </div>
@@ -88,240 +116,274 @@
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between">
+        <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between border-b border-saas-border pb-6">
             <div>
-                <h1 id="mainTitle" class="text-2xl font-bold text-slate-800">KPI Performance: Create Material</h1>
-                <p class="text-sm text-slate-500 mt-1">Monitoring response time dan pencapaian target SLA material catalogue.</p>
+                <h1 id="mainTitle" class="text-3xl font-semibold tracking-tight text-gray-900">Performance Metrics</h1>
+                <p class="text-sm text-gray-500 mt-1.5">Monitor operational service level agreements and processing times.</p>
                 
-                <!-- Filter Controls: Indikator, Bulan, dan Minggu -->
-                <div class="mt-4 flex flex-wrap items-center gap-4">
+                <!-- Filter Controls: Minimalist Pill-style layout -->
+                <div class="mt-6 flex flex-wrap items-center gap-3">
+                    <!-- Dropdown Pilihan Pilihan KPI -->
+                    <div class="flex items-center">
+                        <select id="kpiSelector" onchange="loadData()" class="text-sm border-gray-200 rounded-md text-gray-900 font-semibold bg-gray-50 px-3 py-1.5 border hover:bg-gray-100 cursor-pointer shadow-sm">
+                            <option value="Response Time" selected>🎯 KPI: Response Time</option>
+                            <option value="Validation">🎯 KPI: Validation</option>
+                            <option value="Material Completed">🎯 KPI: Material Completed</option>
+                            <option value="Interchange">🎯 KPI: Interchange</option>
+                        </select>
+                    </div>
+
                     <!-- Dropdown Pilihan Indikator/Sheet -->
-                    <div class="flex items-center gap-2">
-                        <label for="sheetSelector" class="text-sm font-semibold text-slate-600">Pilih Indikator:</label>
-                        <select id="sheetSelector" onchange="loadData()" class="text-sm border-gray-300 rounded-md text-slate-700 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 font-medium bg-white px-3 py-1.5 border">
-                            <option value="all">Semua Indikator</option>
-                            <option value="Create Material" selected>Create Material</option>
-                            <option value="Maintaind">Maintaind</option>
-                            <option value="Transaksi MIGO">Transaksi MIGO</option>
-                            <option value="Realize /Unrealize PR/PO">Realize /Unrealize PR/PO</option>
-                            <option value="Setting Intransit PO">Setting Intransit PO</option>
-                            <option value="Revisi Code Material">Revisi Code Material</option>
-                            <option value="User Log Access">User Log Access</option>
-                            <option value="Additional Storage">Additional Storage</option>
-                            <option value="Transaksi PR">Transaksi PR</option>
-                            <option value="Block/Open PR">Block/Open PR</option>
+                    <div id="sheetSelectorContainer" class="flex items-center border-l border-gray-200 pl-3">
+                        <select id="sheetSelector" onchange="loadData()" class="text-sm border-gray-200 rounded-md text-gray-700 font-medium bg-gray-50 px-3 py-1.5 border hover:bg-gray-100 cursor-pointer">
+                            <option value="all">View: All Indicators</option>
+                            <option value="Create Material" selected>View: Create Material</option>
+                            <option value="Maintaind">View: Maintaind</option>
+                            <option value="Transaksi MIGO">View: Transaksi MIGO</option>
+                            <option value="Realize /Unrealize PR/PO">View: Realize /Unrealize PR/PO</option>
+                            <option value="Setting Intransit PO">View: Setting Intransit PO</option>
+                            <option value="Revisi Code Material">View: Revisi Code Material</option>
+                            <option value="User Log Access">View: User Log Access</option>
+                            <option value="Additional Storage">View: Additional Storage</option>
+                            <option value="Transaksi PR">View: Transaksi PR</option>
+                            <option value="Block/Open PR">View: Block/Open PR</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Dropdown Pilihan Tahun -->
+                    <div class="flex items-center border-l border-gray-200 pl-3">
+                        <select id="yearSelector" onchange="applyFilters()" class="text-sm border-gray-200 rounded-md text-gray-700 font-medium bg-gray-50 px-3 py-1.5 border hover:bg-gray-100 cursor-pointer">
+                            <option value="all">Year: All</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
                         </select>
                     </div>
 
                     <!-- Dropdown Pilihan Bulan -->
-                    <div class="flex items-center gap-2">
-                        <label for="monthSelector" class="text-sm font-semibold text-slate-600">Bulan:</label>
-                        <select id="monthSelector" onchange="applyFilters()" class="text-sm border-gray-300 rounded-md text-slate-700 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 font-medium bg-white px-3 py-1.5 border">
-                            <option value="all">Semua Bulan</option>
-                            <option value="0">Januari</option>
-                            <option value="1">Februari</option>
-                            <option value="2">Maret</option>
-                            <option value="3">April</option>
-                            <option value="4">Mei</option>
-                            <option value="5">Juni</option>
-                            <option value="6">Juli</option>
-                            <option value="7">Agustus</option>
-                            <option value="8">September</option>
-                            <option value="9">Oktober</option>
-                            <option value="10">November</option>
-                            <option value="11">Desember</option>
+                    <div class="flex items-center">
+                        <select id="monthSelector" onchange="applyFilters()" class="text-sm border-gray-200 rounded-md text-gray-700 font-medium bg-gray-50 px-3 py-1.5 border hover:bg-gray-100 cursor-pointer">
+                            <option value="all">Month: All</option>
+                            <option value="0">Jan</option>
+                            <option value="1">Feb</option>
+                            <option value="2">Mar</option>
+                            <option value="3">Apr</option>
+                            <option value="4">May</option>
+                            <option value="5">Jun</option>
+                            <option value="6">Jul</option>
+                            <option value="7">Aug</option>
+                            <option value="8">Sep</option>
+                            <option value="9">Oct</option>
+                            <option value="10">Nov</option>
+                            <option value="11">Dec</option>
                         </select>
                     </div>
 
                     <!-- Dropdown Pilihan Minggu -->
-                    <div class="flex items-center gap-2">
-                        <label for="weekSelector" class="text-sm font-semibold text-slate-600">Minggu:</label>
-                        <select id="weekSelector" onchange="applyFilters()" class="text-sm border-gray-300 rounded-md text-slate-700 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 font-medium bg-white px-3 py-1.5 border">
-                            <option value="all">Semua Minggu</option>
-                            <option value="1">Week 1 (Tgl 1 - 7)</option>
-                            <option value="2">Week 2 (Tgl 8 - 14)</option>
-                            <option value="3">Week 3 (Tgl 15 - 21)</option>
-                            <option value="4">Week 4 (Tgl 22 - 28)</option>
-                            <option value="5">Week 5 (Tgl 29 - 31)</option>
+                    <div class="flex items-center">
+                        <select id="weekSelector" onchange="applyFilters()" class="text-sm border-gray-200 rounded-md text-gray-700 font-medium bg-gray-50 px-3 py-1.5 border hover:bg-gray-100 cursor-pointer">
+                            <option value="all">Week: All</option>
+                            <option value="1">Week 1 (1-7)</option>
+                            <option value="2">Week 2 (8-14)</option>
+                            <option value="3">Week 3 (15-21)</option>
+                            <option value="4">Week 4 (22-28)</option>
+                            <option value="5">Week 5 (29-31)</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <div id="dataSourceBadge" class="mt-4 md:mt-0 px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full border border-yellow-200 inline-block w-max">
-                <i class="fas fa-database mr-1"></i> Memuat Data...
+            <div id="dataSourceBadge" class="mt-4 md:mt-0 px-2.5 py-1 text-gray-600 bg-gray-100 text-xs font-medium rounded-md border border-gray-200 inline-flex items-center gap-1.5 w-max">
+                <div class="h-2 w-2 rounded-full bg-yellow-400 animate-pulse"></div>
+                Memuat Data...
             </div>
         </div>
 
         <!-- KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
             <!-- Card 1: Total Requests -->
-            <div class="glass-card p-6 flex flex-col justify-between relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 text-blue-50 opacity-50 group-hover:scale-110 transition-transform duration-300"><i class="fas fa-file-alt text-8xl"></i></div>
-                <div>
-                    <p class="text-sm font-medium text-slate-500 mb-1">Total Permintaan</p>
-                    <h3 class="text-3xl font-bold text-slate-800" id="valTotalReq">0</h3>
+            <div class="saas-card p-5 flex flex-col justify-between">
+                <div class="flex justify-between items-start mb-4">
+                    <p id="card1Title" class="text-sm font-medium text-gray-500">Total Requests</p>
+                    <div class="p-1.5 bg-gray-50 rounded-md text-gray-400 border border-gray-100"><i id="card1Icon" class="fas fa-layer-group text-xs"></i></div>
                 </div>
-                <div class="mt-4 flex items-center text-xs">
-                    <span class="text-emerald-500 font-medium bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1"><i class="fas fa-arrow-up"></i> Bulan ini</span>
+                <div>
+                    <h3 class="text-3xl font-semibold tracking-tight text-gray-900" id="valTotalReq">0</h3>
+                </div>
+                <div class="mt-3">
+                    <span class="text-xs font-medium text-gray-500">Total volume for selected period</span>
                 </div>
             </div>
 
-            <!-- Card 2: Avg Response Time -->
-            <div class="glass-card p-6 flex flex-col justify-between relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 text-amber-50 opacity-50 group-hover:scale-110 transition-transform duration-300"><i class="fas fa-stopwatch text-8xl"></i></div>
-                <div class="relative z-10">
-                    <p class="text-sm font-medium text-slate-500 mb-1">Rata-rata Response Time</p>
-                    <h3 class="text-3xl font-bold text-slate-800 flex items-baseline gap-1">
-                        <span id="valAvgRes">0.0</span> <span class="text-sm font-medium text-slate-500">Jam</span>
-                    </h3>
-                    <div class="flex gap-3 mt-2">
-                        <span class="text-xs text-slate-500 font-medium bg-slate-50 px-2 py-0.5 rounded border border-slate-100">Min: <span id="valMinRes" class="text-emerald-600">0.0</span> Jam</span>
-                        <span class="text-xs text-slate-500 font-medium bg-slate-50 px-2 py-0.5 rounded border border-slate-100">Max: <span id="valMaxRes" class="text-rose-600">0.0</span> Jam</span>
-                    </div>
+            <!-- Card 2: Avg Response Time / Open vs Close Count -->
+            <div class="saas-card p-5 flex flex-col justify-between">
+                <div class="flex justify-between items-start mb-4">
+                    <p id="card2Title" class="text-sm font-medium text-gray-500">Avg Response Time</p>
+                    <div class="p-1.5 bg-gray-50 rounded-md text-gray-400 border border-gray-100"><i id="card2Icon" class="fas fa-clock text-xs"></i></div>
                 </div>
-                <div class="mt-4 flex items-center text-xs relative z-10">
-                    <span class="text-amber-500 font-medium" id="valAvgStatus">Menunggu data...</span>
+                <div>
+                    <h3 class="text-3xl font-semibold tracking-tight text-gray-900 flex items-baseline gap-1">
+                        <span id="valAvgRes">0.0</span> <span id="card2Unit" class="text-sm font-medium text-gray-400">h</span>
+                    </h3>
+                </div>
+                <div class="flex justify-between items-center mt-3" id="card2SubContainer">
+                    <div class="flex gap-2" id="card2MinMax">
+                        <span class="text-[11px] font-medium text-gray-500">Min: <span id="valMinRes" class="text-gray-900">0.0</span></span>
+                        <span class="text-[11px] font-medium text-gray-500">Max: <span id="valMaxRes" class="text-gray-900">0.0</span></span>
+                    </div>
+                    <span id="valAvgStatus" class="text-[11px] font-medium text-gray-400">Loading...</span>
                 </div>
             </div>
 
             <!-- Card 3: KPI Achievement -->
-            <div class="glass-card p-6 flex flex-col justify-between relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 text-emerald-50 opacity-50 group-hover:scale-110 transition-transform duration-300"><i class="fas fa-check-circle text-8xl"></i></div>
-                <div>
-                    <p class="text-sm font-medium text-slate-500 mb-1">Pencapaian KPI (Achieved)</p>
-                    <h3 class="text-3xl font-bold text-emerald-600" id="valKpiAch">0%</h3>
+            <div class="saas-card p-5 flex flex-col justify-between">
+                <div class="flex justify-between items-start mb-4">
+                    <p id="card3Title" class="text-sm font-medium text-gray-500">SLA Achievement</p>
+                    <div class="p-1.5 bg-gray-50 rounded-md text-gray-600 border border-gray-200"><i class="fas fa-bullseye text-xs"></i></div>
                 </div>
-                <div class="mt-4 w-full bg-slate-100 rounded-full h-1.5">
-                    <div class="bg-emerald-500 h-1.5 rounded-full" id="barKpiAch" style="width: 0%"></div>
+                <div>
+                    <h3 class="text-3xl font-semibold tracking-tight text-gray-900" id="valKpiAch">0%</h3>
+                </div>
+                <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-black h-1.5 rounded-full transition-all duration-1000 ease-out" id="barKpiAch" style="width: 0%"></div>
                 </div>
             </div>
 
             <!-- Card 4: In Progress/Pending -->
-            <div class="glass-card p-6 flex flex-col justify-between relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 text-rose-50 opacity-50 group-hover:scale-110 transition-transform duration-300"><i class="fas fa-tasks text-8xl"></i></div>
-                <div>
-                    <p class="text-sm font-medium text-slate-500 mb-1">Dalam Proses (Pending)</p>
-                    <h3 class="text-3xl font-bold text-rose-600" id="valPending">0</h3>
+            <div class="saas-card p-5 flex flex-col justify-between">
+                <div class="flex justify-between items-start mb-4">
+                    <p id="card4Title" class="text-sm font-medium text-gray-500">Active Pipeline</p>
+                    <div class="p-1.5 bg-gray-50 rounded-md text-gray-500 border border-gray-200"><i id="card4Icon" class="fas fa-spinner text-xs"></i></div>
                 </div>
-                <div class="mt-4 flex items-center text-xs">
-                    <span class="text-slate-500 font-medium">Material belum terselesaikan</span>
+                <div>
+                    <h3 class="text-3xl font-semibold tracking-tight text-gray-900" id="valPending">0</h3>
+                </div>
+                <div class="mt-3">
+                    <span id="card4Desc" class="text-xs font-medium text-gray-500">Items pending resolution</span>
                 </div>
             </div>
         </div>
 
         <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
             <!-- Line Chart: Response Time Trend -->
-            <div class="glass-card p-6 lg:col-span-2">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-base font-semibold text-slate-800">Tren Response Time</h3>
-                    <select class="text-xs border-gray-300 rounded-md text-slate-500 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                        <option>30 Hari Terakhir</option>
+            <div class="saas-card p-6 lg:col-span-2">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="chartTrendTitle" class="text-sm font-semibold text-gray-900 tracking-tight">Performance Trend</h3>
+                    
+                    <!-- Trend Grouping Dropdown (Harian, Mingguan, Bulanan, Tahunan) -->
+                    <select id="trendGrouping" onchange="applyFilters()" class="text-xs text-gray-500 font-medium bg-gray-50 px-2 py-1.5 rounded border border-gray-100 cursor-pointer outline-none hover:bg-gray-100">
+                        <option value="daily" selected>Daily Trend</option>
+                        <option value="weekly">Weekly Trend</option>
+                        <option value="monthly">Monthly Trend</option>
+                        <option value="yearly">Yearly Trend</option>
                     </select>
                 </div>
-                <div class="relative h-72 w-full">
+                <div class="relative h-64 w-full">
                     <canvas id="trendChart"></canvas>
                 </div>
             </div>
 
             <!-- Doughnut Chart: Request by Dept -->
-            <div class="glass-card p-6">
-                <h3 class="text-base font-semibold text-slate-800 mb-4">Permintaan per Departemen</h3>
-                <div class="relative h-64 w-full flex justify-center">
+            <div class="saas-card p-6">
+                <h3 id="chartDeptTitle" class="text-sm font-semibold text-gray-900 tracking-tight mb-6">Volume by Department</h3>
+                <div class="relative h-56 w-full flex justify-center">
                     <canvas id="deptChart"></canvas>
                 </div>
             </div>
         </div>
 
         <!-- Data Table Section -->
-        <div class="glass-card p-0 overflow-hidden mb-12">
-            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h3 class="text-base font-semibold text-slate-800">Detail Transaksi Terbaru</h3>
+        <div class="saas-card overflow-hidden mb-12">
+            <div class="px-6 py-5 border-b border-saas-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white">
+                <h3 class="text-sm font-semibold text-gray-900 tracking-tight">Recent Transactions</h3>
                 <div class="relative w-full sm:w-64">
-                    <input type="text" id="searchInput" placeholder="Cari Material atau Dept..." class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <i class="fas fa-search absolute left-3 top-2.5 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search records..." class="w-full pl-9 pr-4 py-1.5 bg-gray-50 border border-gray-200 rounded-md text-sm focus:outline-none focus:bg-white focus:ring-1 focus:ring-black focus:border-black transition-all">
+                    <i class="fas fa-search absolute left-3 top-2 text-gray-400 text-xs"></i>
                 </div>
             </div>
             <div class="table-container w-full overflow-x-auto">
-                <table class="w-full whitespace-nowrap" id="dataTable">
-                    <thead class="bg-slate-50 sticky top-0 z-10 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        <tr>
-                            <th class="px-6 py-4 text-left">Timestamp</th>
-                            <th class="px-6 py-4 text-left">Material & Desc</th>
-                            <th class="px-6 py-4 text-left">Requester/Dept</th>
-                            <th class="px-6 py-4 text-left">Pelaksana</th>
-                            <th class="px-6 py-4 text-center">Status</th>
-                            <th class="px-6 py-4 text-center">Response Time</th>
-                            <th class="px-6 py-4 text-center">SLA Ach</th>
-                        </tr>
+                <table class="w-full whitespace-nowrap text-left" id="dataTable">
+                    <thead class="bg-gray-50/50 sticky top-0 z-10 border-b border-saas-border backdrop-blur-sm" id="tableHead">
+                        <!-- Head is dynamic now -->
                     </thead>
-                    <tbody class="divide-y divide-slate-100 text-sm text-slate-700" id="tableBody">
+                    <tbody class="divide-y divide-gray-100 text-sm text-gray-700 bg-white" id="tableBody">
                         <!-- Data rows will be inserted here -->
                         <tr>
-                            <td colspan="7" class="px-6 py-8 text-center text-slate-500">
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                                 <div class="flex flex-col items-center justify-center">
-                                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-10 w-10 mb-4"></div>
-                                    <p>Memuat data dari Google Sheets...</p>
+                                    <div class="loader rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 mb-3"></div>
+                                    <p class="text-sm font-medium">Fetching records...</p>
                                 </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="p-4 border-t border-slate-100 bg-slate-50 text-xs text-slate-500 flex justify-between items-center">
-                <span id="tableInfo">Menampilkan 0 data</span>
+            <div class="px-6 py-3 border-t border-saas-border bg-gray-50/50 text-xs font-medium text-gray-500 flex justify-between items-center">
+                <span id="tableInfo">Showing 0 records</span>
             </div>
         </div>
 
     </div>
 
     <script>
+        // --- GLOBAL CHART DEFAULTS (SaaS Aesthetic) ---
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#6B7280'; // text-gray-500
+        Chart.defaults.scale.grid.color = '#F3F4F6'; // text-gray-100
+
         // --- CONFIGURATION ---
-        // Menggunakan Google Visualization API (gviz) dengan base URL yang siap menerima nama sheet dinamis
         const BASE_CSV_URL = "https://docs.google.com/spreadsheets/d/1Bu4_lnZJe-NAezO0Jyw2AkqQk0bdVFTU8VrIlSn3eJY/gviz/tq?tqx=out:csv&sheet="; 
-        
+        const VAL_CSV_URL = "https://docs.google.com/spreadsheets/d/1f0e_taCohOJn9-ceEp6101ETUPNJwyoDAP0S9x6a8fk/gviz/tq?tqx=out:csv&gid=1041602548";
+
         let globalData = [];
-        let activeFilteredData = []; // Menyimpan data yang sudah difilter oleh Bulan/Minggu
+        let activeFilteredData = [];
         let trendChartInstance = null;
         let deptChartInstance = null;
 
-        // --- SIMULATED DATA FALLBACK ---
-        // If Google Sheet CSV fetch fails (due to CORS or wrong sheet ID without explicit gid),
-        // we use this realistic mock data to ensure the dashboard remains fully functional and professional.
         const mockData = [
             { "Timestamp": "2023-10-01 08:30:00", "Material": "Bearing SKF 6205", "Plant": "P001", "SLoc": "S100", "Storage Bin": "A-01-01", "Alasan/Metadata": "New Equipment", "Requester": "Budi Santoso", "Dept": "Maintenance", "Waktu Penyelesaian": "2023-10-01 10:30:00", "CCP": "Yes", "Progress/Remarks": "Done", "PELAKSANA": "Admin Master Data", "RESPON TIME": "2.0", "Ach": "Achieved" },
-            { "Timestamp": "2023-10-02 09:15:00", "Material": "V-Belt B45", "Plant": "P001", "SLoc": "S100", "Storage Bin": "B-02-03", "Alasan/Metadata": "Stock Replenishment", "Requester": "Andi Wijaya", "Dept": "Production", "Waktu Penyelesaian": "2023-10-02 14:15:00", "CCP": "No", "Progress/Remarks": "Done", "PELAKSANA": "Admin Master Data", "RESPON TIME": "5.0", "Ach": "Achieved" },
-            { "Timestamp": "2023-10-03 14:00:00", "Material": "Motor 3 Phase 5HP", "Plant": "P002", "SLoc": "S200", "Storage Bin": "C-01-05", "Alasan/Metadata": "Breakdown", "Requester": "Citra Lestari", "Dept": "Engineering", "Waktu Penyelesaian": "2023-10-04 10:00:00", "CCP": "Yes", "Progress/Remarks": "Done", "PELAKSANA": "Admin Master Data", "RESPON TIME": "20.0", "Ach": "Not Achieved" },
-            { "Timestamp": "2023-10-05 10:00:00", "Material": "Sensor Inductive", "Plant": "P001", "SLoc": "S100", "Storage Bin": "E-04-12", "Alasan/Metadata": "Upgrade", "Requester": "Budi Santoso", "Dept": "Maintenance", "Waktu Penyelesaian": "2023-10-05 11:30:00", "CCP": "No", "Progress/Remarks": "Done", "PELAKSANA": "Admin Master Data", "RESPON TIME": "1.5", "Ach": "Achieved" },
-            { "Timestamp": "2023-10-06 08:00:00", "Material": "Safety Gloves XL", "Plant": "P003", "SLoc": "S300", "Storage Bin": "Rack 5", "Alasan/Metadata": "Consumable", "Requester": "Diana", "Dept": "HSE", "Waktu Penyelesaian": "", "CCP": "No", "Progress/Remarks": "In Progress", "PELAKSANA": "Admin Master Data", "RESPON TIME": "", "Ach": "-" },
-            { "Timestamp": "2023-10-07 13:45:00", "Material": "Lubricant Oil 200L", "Plant": "P001", "SLoc": "S100", "Storage Bin": "L-01", "Alasan/Metadata": "PM Schedule", "Requester": "Eko", "Dept": "Maintenance", "Waktu Penyelesaian": "2023-10-07 16:45:00", "CCP": "Yes", "Progress/Remarks": "Done", "PELAKSANA": "Admin Master Data", "RESPON TIME": "3.0", "Ach": "Achieved" },
-            { "Timestamp": "2023-10-08 09:30:00", "Material": "Contactor 220V", "Plant": "P002", "SLoc": "S200", "Storage Bin": "E-02-01", "Alasan/Metadata": "Spare", "Requester": "Citra Lestari", "Dept": "Engineering", "Waktu Penyelesaian": "2023-10-09 11:30:00", "CCP": "Yes", "Progress/Remarks": "Done", "PELAKSANA": "Admin Master Data", "RESPON TIME": "26.0", "Ach": "Not Achieved" },
-            { "Timestamp": "2023-10-10 11:15:00", "Material": "Filter Air Heavy Duty", "Plant": "P001", "SLoc": "S100", "Storage Bin": "F-03-02", "Alasan/Metadata": "Stock", "Requester": "Andi Wijaya", "Dept": "Production", "Waktu Penyelesaian": "2023-10-10 13:15:00", "CCP": "No", "Progress/Remarks": "Done", "PELAKSANA": "Admin Master Data", "RESPON TIME": "2.0", "Ach": "Achieved" },
-            { "Timestamp": "2023-10-11 15:00:00", "Material": "O-Ring Set", "Plant": "P001", "SLoc": "S100", "Storage Bin": "O-01", "Alasan/Metadata": "Overhaul", "Requester": "Budi Santoso", "Dept": "Maintenance", "Waktu Penyelesaian": "", "CCP": "Yes", "Progress/Remarks": "Pending Dept Head", "PELAKSANA": "-", "RESPON TIME": "", "Ach": "-" },
-            { "Timestamp": "2023-10-12 08:20:00", "Material": "Pump Centrifugal", "Plant": "P002", "SLoc": "S200", "Storage Bin": "P-01", "Alasan/Metadata": "Project Expansion", "Requester": "Fajar", "Dept": "Project", "Waktu Penyelesaian": "2023-10-12 15:20:00", "CCP": "Yes", "Progress/Remarks": "Done", "PELAKSANA": "Admin Master Data", "RESPON TIME": "7.0", "Ach": "Achieved" }
+            { "Timestamp": "2023-10-02 09:15:00", "Material": "V-Belt B45", "Plant": "P001", "SLoc": "S100", "Storage Bin": "B-02-03", "Alasan/Metadata": "Stock Replenishment", "Requester": "Andi Wijaya", "Dept": "Production", "Waktu Penyelesaian": "2023-10-02 14:15:00", "CCP": "No", "Progress/Remarks": "Done", "PELAKSANA": "Admin Master Data", "RESPON TIME": "5.0", "Ach": "Achieved" }
         ];
 
-        // Format date to locale string
-        const formatDate = (dateString) => {
-            if (!dateString) return '-';
-            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            try {
-                return new Date(dateString).toLocaleDateString('id-ID', options);
-            } catch (e) {
-                return dateString;
-            }
-        };
-
-        // Fungsi parsing tanggal super ketat dan kebal rotasi format dari Google API
         function parseDateStrict(str, assumeDDMM) {
             if (!str) return new Date(NaN);
             str = String(str).trim();
-            const parts = str.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})(?:\s+(\d{1,2})[:\.](\d{1,2})(?:[:\.](\d{1,2}))?)?(?:\s*(AM|PM|am|pm))?/i);
+            
+            // Handle Google Sheets gviz date format: "Date(YYYY, M, D)"
+            if (str.startsWith('Date(')) {
+                const dParts = str.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
+                if (dParts) {
+                    return new Date(parseInt(dParts[1]), parseInt(dParts[2]), parseInt(dParts[3]));
+                }
+            }
+
+            const parts = str.match(/(\d{1,4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,4})(?:\s+(\d{1,2})[:\.](\d{1,2})(?:[:\.](\d{1,2}))?)?(?:\s*(AM|PM|am|pm))?/i);
 
             if (parts) {
+                let year, month, day;
                 let p1 = parseInt(parts[1], 10);
                 let p2 = parseInt(parts[2], 10);
-                const year = parseInt(parts[3], 10);
+                let p3 = parseInt(parts[3], 10);
+
+                if (p1 > 1000) {
+                    year = p1; month = p2; day = p3;
+                } else if (p3 > 1000) {
+                    year = p3;
+                    if (assumeDDMM) { day = p1; month = p2; }
+                    else { month = p1; day = p2; }
+                } else {
+                    year = p3 + 2000;
+                    if (assumeDDMM) { day = p1; month = p2; }
+                    else { month = p1; day = p2; }
+                }
+
+                if (month > 12) {
+                    let temp = month; month = day; day = temp;
+                }
+
                 let hours = parts[4] ? parseInt(parts[4], 10) : 0;
                 const minutes = parts[5] ? parseInt(parts[5], 10) : 0;
                 const seconds = parts[6] ? parseInt(parts[6], 10) : 0;
@@ -330,60 +392,50 @@
                 if (ampm === 'PM' && hours < 12) hours += 12;
                 if (ampm === 'AM' && hours === 12) hours = 0;
 
-                let day, month;
-                if (assumeDDMM) {
-                    day = p1; month = p2;
-                } else {
-                    month = p1; day = p2;
-                }
-
-                // Proteksi mutlak jika angka melewati batas 12 bulan
-                if (month > 12) {
-                    let temp = month; month = day; day = temp;
-                }
-
                 return new Date(year, month - 1, day, hours, minutes, seconds);
             }
             return new Date(str);
         }
 
         function parseCustomDate(str) {
-            return parseDateStrict(str, true); // Default ke format Indonesia
+            return parseDateStrict(str, true); 
         }
 
-        // Main Initialization
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             
-            // Search functionality
             document.getElementById('searchInput').addEventListener('keyup', function(e) {
                 const term = e.target.value.toLowerCase();
-                const filtered = activeFilteredData.filter(item => { // Pencarian pada data yang sudah difilter waktu
-                    return (item.Material && item.Material.toLowerCase().includes(term)) || 
-                           (item.Dept && item.Dept.toLowerCase().includes(term)) ||
-                           (item.Requester && item.Requester.toLowerCase().includes(term));
+                const filtered = activeFilteredData.filter(item => { 
+                    // Search through all object values dynamically
+                    return Object.values(item).some(val => String(val).toLowerCase().includes(term));
                 });
                 renderTable(filtered);
             });
         });
 
-        // Fungsi baru untuk menerapkan filter Bulan & Minggu
         function applyFilters() {
+            const yearVal = document.getElementById('yearSelector').value;
             const monthVal = document.getElementById('monthSelector').value;
             const weekVal = document.getElementById('weekSelector').value;
 
             let filteredData = globalData;
 
-            if (monthVal !== 'all' || weekVal !== 'all') {
+            if (yearVal !== 'all' || monthVal !== 'all' || weekVal !== 'all') {
                 filteredData = globalData.filter(row => {
                     if (!row['Timestamp']) return false;
                     
-                    // Menggunakan parseCustomDate agar filter bulan/minggu tidak salah baca
                     const dateObj = parseCustomDate(row['Timestamp']);
                     if (isNaN(dateObj)) return false;
 
+                    const rowYear = dateObj.getFullYear();
                     const rowMonth = dateObj.getMonth();
                     const rowDate = dateObj.getDate();
+
+                    let yearMatch = true;
+                    if (yearVal !== 'all') {
+                        yearMatch = (rowYear === parseInt(yearVal));
+                    }
 
                     let monthMatch = true;
                     if (monthVal !== 'all') {
@@ -399,7 +451,7 @@
                         else if (weekVal === '5') weekMatch = (rowDate >= 29 && rowDate <= 31);
                     }
 
-                    return monthMatch && weekMatch;
+                    return yearMatch && monthMatch && weekMatch;
                 });
             }
 
@@ -407,10 +459,9 @@
             processDashboard(activeFilteredData);
         }
 
-        // Fungsi baru untuk mengambil data per sheet secara independen
-        function fetchSingleSheet(sheetName) {
+        function fetchSingleSheet(sheetName, isValidation) {
             return new Promise((resolve) => {
-                const CSV_URL = BASE_CSV_URL + encodeURIComponent(sheetName);
+                const CSV_URL = isValidation ? VAL_CSV_URL : BASE_CSV_URL + encodeURIComponent(sheetName);
                 Papa.parse(CSV_URL, {
                     download: true,
                     header: true,
@@ -420,84 +471,301 @@
                     },
                     complete: function(results) {
                         if (results.data && results.data.length > 0) {
-                            let sheetData = results.data.filter(row => {
-                                const matKey = Object.keys(row).find(k => k.trim().toLowerCase() === 'material') || Object.keys(row)[1];
-                                return row[matKey] && String(row[matKey]).trim() !== '';
-                            });
-                            
-                            sheetData.forEach(row => {
-                                const matKey = Object.keys(row).find(k => k.trim().toLowerCase() === 'material') || Object.keys(row)[1];
-                                row['Material'] = row[matKey];
-                            });
+                            let sheetData = [];
+                            if (isValidation) {
+                                // Deteksi otomatis kolom tanggal terbaik untuk data Validation
+                                const sampleRow = results.data.find(r => r && Object.values(r).some(v => v));
+                                let timeKey = null;
+                                if (sampleRow) {
+                                    timeKey = Object.keys(sampleRow).find(k => {
+                                        let kl = k.trim().toLowerCase();
+                                        return kl.includes('timestamp') || kl.includes('time stamp') || kl.includes('waktu') || kl.includes('date') || kl.includes('tanggal') || kl.includes('created') || kl.includes('tgl');
+                                    });
+                                    // Jika nama kolom tidak umum, scan isi baris pertama yang formatnya menyerupai tanggal
+                                    if (!timeKey) {
+                                        for (let i = 0; i < Math.min(10, results.data.length); i++) {
+                                            let row = results.data[i];
+                                            timeKey = Object.keys(row).find(k => {
+                                                const v = String(row[k]).trim();
+                                                const dateRegex = /\d{1,4}[\/\-]\d{1,2}[\/\-]\d{1,4}/; // Matches standard dates
+                                                const gvizRegex = /Date\(\d+,\s*\d+,\s*\d+\)/; // Matches Google Viz Object Date
+                                                return dateRegex.test(v) || gvizRegex.test(v);
+                                            });
+                                            if (timeKey) break;
+                                        }
+                                    }
+                                    if (!timeKey) {
+                                        timeKey = Object.keys(sampleRow)[0];
+                                    }
+                                }
+
+                                // Simpan semua data tanpa membuang baris untuk Validation agar total data (226rb+) tertangkap akurat
+                                sheetData = results.data.map(row => {
+                                    if (timeKey && row[timeKey]) row['Timestamp'] = row[timeKey];
+                                    return row;
+                                });
+                            } else {
+                                sheetData = results.data.filter(row => {
+                                    // Dynamically find columns
+                                    const timeKey = Object.keys(row).find(k => k.trim().toLowerCase().includes('timestamp') || k.trim().toLowerCase().includes('waktu'));
+                                    if (timeKey && row[timeKey]) row['Timestamp'] = row[timeKey];
+                                    
+                                    return row['Timestamp'] && String(row['Timestamp']).trim() !== '';
+                                });
+                                
+                                if (!isValidation) {
+                                    sheetData.forEach(row => {
+                                        const matKey = Object.keys(row).find(k => k.trim().toLowerCase() === 'material') || Object.keys(row)[1];
+                                        row['Material'] = row[matKey];
+                                    });
+                                }
+                            }
                             resolve(sheetData);
                         } else {
                             resolve([]);
                         }
                     },
                     error: function(error) {
-                        console.warn("Gagal membaca sheet:", sheetName, error);
-                        resolve([]); // Jika 1 sheet gagal/kosong, abaikan dan lanjut ke yang lain
+                        console.warn("Fetch failed for sheet:", sheetName, error);
+                        resolve([]); 
                     }
                 });
             });
         }
 
         function loadData() {
+            const selectedKpi = document.getElementById('kpiSelector').value;
             const selectedSheet = document.getElementById('sheetSelector').value;
             
-            // Perbarui Judul Halaman
-            document.getElementById('mainTitle').innerText = selectedSheet === 'all' ? `KPI Performance: Respone Time` : `KPI Performance: ${selectedSheet}`;
+            let displayTitle = selectedSheet === 'all' ? `Metrics: ${selectedKpi}` : `${selectedKpi} - ${selectedSheet}`;
+            if(selectedKpi === 'Validation') displayTitle = `Metrics: Validation Progress`;
+            document.getElementById('mainTitle').innerText = displayTitle;
 
-            // Update UI to loading state
-            document.getElementById('lastUpdated').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sinkronisasi...';
-            document.getElementById('dataSourceBadge').className = "mt-4 md:mt-0 px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full border border-yellow-200 inline-block w-max";
-            document.getElementById('dataSourceBadge').innerHTML = '<i class="fas fa-sync fa-spin mr-1"></i> Mengambil Data Google Sheets...';
+            const badge = document.getElementById('dataSourceBadge');
+            badge.className = "mt-4 md:mt-0 px-2.5 py-1 text-gray-600 bg-gray-100 text-xs font-medium rounded-md border border-gray-200 inline-flex items-center gap-1.5 w-max";
+            badge.innerHTML = '<div class="h-2 w-2 rounded-full bg-yellow-400 animate-pulse"></div> Fetching source...';
+            document.getElementById('lastUpdated').innerText = 'Syncing...';
 
-            if (selectedSheet === 'all') {
-                // Tarik nama semua sheet dari dropdown, kecuali opsi "all"
-                const allSheets = Array.from(document.getElementById('sheetSelector').options)
-                    .map(opt => opt.value)
-                    .filter(val => val !== 'all');
+            updateDynamicLabels(selectedKpi);
 
-                // Proses semua sheet secara bersamaan
-                Promise.all(allSheets.map(sheet => fetchSingleSheet(sheet)))
-                    .then(results => {
-                        globalData = results.flat(); // Gabungkan semua data dari berbagai sheet
-                        if (globalData.length > 0) {
-                            updateDashboardState("Data Real Time (Gabungan)", "bg-emerald-100 text-emerald-800 border-emerald-200");
-                        } else {
-                            globalData = mockData;
-                            updateDashboardState("Data Kosong, Mode Demo", "bg-blue-100 text-blue-800 border-blue-200");
-                        }
-                        applyFilters();
-                    });
-            } else {
-                // Jika hanya 1 sheet yang dipilih
-                fetchSingleSheet(selectedSheet).then(data => {
+            if (selectedKpi === 'Validation') {
+                // Fetch strictly from the specified GID
+                fetchSingleSheet("Validation", true).then(data => {
                     if (data && data.length > 0) {
                         globalData = data;
-                        updateDashboardState("Data Real Time (G-Sheets)", "bg-emerald-100 text-emerald-800 border-emerald-200");
+                        updateDashboardState("Live Connected (Validation)", "bg-emerald-50 text-emerald-700 border-emerald-200", "bg-emerald-500");
                     } else {
-                        console.warn("Format data Google Sheet tidak sesuai atau kosong.");
-                        globalData = mockData;
-                        updateDashboardState("Data Simulasi (Mode Demo)", "bg-blue-100 text-blue-800 border-blue-200");
+                        globalData = [];
+                        updateDashboardState("Data Empty", "bg-gray-50 text-gray-700 border-gray-200", "bg-gray-400");
                     }
                     applyFilters();
                 });
+            } else {
+                // Fetch original logic (Response Time)
+                if (selectedSheet === 'all') {
+                    const allSheets = Array.from(document.getElementById('sheetSelector').options)
+                        .map(opt => opt.value)
+                        .filter(val => val !== 'all');
+
+                    Promise.all(allSheets.map(sheet => fetchSingleSheet(sheet, false)))
+                        .then(results => {
+                            globalData = results.flat(); 
+                            if (globalData.length > 0) {
+                                updateDashboardState("Live Connected", "bg-emerald-50 text-emerald-700 border-emerald-200", "bg-emerald-500");
+                            } else {
+                                globalData = mockData;
+                                updateDashboardState("Local Demo", "bg-gray-50 text-gray-700 border-gray-200", "bg-gray-400");
+                            }
+                            applyFilters();
+                        });
+                } else {
+                    fetchSingleSheet(selectedSheet, false).then(data => {
+                        if (data && data.length > 0) {
+                            globalData = data;
+                            updateDashboardState("Live Connected", "bg-emerald-50 text-emerald-700 border-emerald-200", "bg-emerald-500");
+                        } else {
+                            globalData = mockData;
+                            updateDashboardState("Local Demo", "bg-gray-50 text-gray-700 border-gray-200", "bg-gray-400");
+                        }
+                        applyFilters();
+                    });
+                }
             }
         }
 
-        function updateDashboardState(text, styleClasses) {
+        function updateDynamicLabels(kpi) {
+            const sheetContainer = document.getElementById('sheetSelectorContainer');
+            
+            if (kpi === 'Validation') {
+                if(sheetContainer) sheetContainer.style.display = 'none';
+                
+                document.getElementById('card1Title').innerText = 'Total Validations';
+                document.getElementById('card2Title').innerText = 'Status Progress';
+                document.getElementById('card3Title').innerText = 'Validation Achievement';
+                document.getElementById('card4Title').innerText = 'Percentage Open';
+                
+                document.getElementById('card2Icon').className = 'fas fa-tasks text-xs';
+                document.getElementById('card4Icon').className = 'fas fa-door-open text-xs';
+                document.getElementById('card2Unit').style.display = 'none';
+                document.getElementById('card2MinMax').style.display = 'none';
+                document.getElementById('card4Desc').innerText = 'Remaining open items';
+                document.getElementById('chartTrendTitle').innerText = 'Close Progress Trend';
+            } else {
+                if(sheetContainer) sheetContainer.style.display = 'flex';
+                
+                document.getElementById('card1Title').innerText = 'Total Requests';
+                document.getElementById('card2Title').innerText = 'Avg Response Time';
+                document.getElementById('card3Title').innerText = 'SLA Achievement';
+                document.getElementById('card4Title').innerText = 'Active Pipeline';
+                
+                document.getElementById('card2Icon').className = 'fas fa-clock text-xs';
+                document.getElementById('card4Icon').className = 'fas fa-spinner text-xs';
+                document.getElementById('card2Unit').style.display = 'inline';
+                document.getElementById('card2MinMax').style.display = 'flex';
+                document.getElementById('card4Desc').innerText = 'Items pending resolution';
+                document.getElementById('chartTrendTitle').innerText = 'Performance Trend';
+            }
+        }
+
+        function updateDashboardState(text, styleClasses, dotClass) {
             const badge = document.getElementById('dataSourceBadge');
-            badge.className = `mt-3 md:mt-0 px-3 py-1 text-xs font-semibold rounded-full border inline-block w-max ${styleClasses}`;
-            badge.innerHTML = `<i class="fas ${text.includes('Demo') ? 'fa-info-circle' : 'fa-check-circle'} mr-1"></i> ${text}`;
+            badge.className = `mt-4 md:mt-0 px-2.5 py-1 text-xs font-medium rounded-md border inline-flex items-center gap-1.5 w-max ${styleClasses}`;
+            badge.innerHTML = `<div class="h-1.5 w-1.5 rounded-full ${dotClass}"></div> ${text}`;
             
             const now = new Date();
-            document.getElementById('lastUpdated').innerHTML = `Update Terakhir: ${now.toLocaleTimeString('id-ID')} WITA`;
+            document.getElementById('lastUpdated').innerText = `Updated ${now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit' })}`;
         }
 
         function processDashboard(data) {
-            // 1. Calculate Metrics
+            const selectedKpi = document.getElementById('kpiSelector').value;
+            
+            if (selectedKpi === 'Validation') {
+                processValidation(data);
+            } else {
+                processResponseTime(data);
+            }
+        }
+
+        function getGroupingKey(parsedDate, grouping) {
+            if (isNaN(parsedDate)) return "Unknown";
+            const yyyy = parsedDate.getFullYear();
+            const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(parsedDate.getDate()).padStart(2, '0');
+
+            if (grouping === 'daily') {
+                return `${yyyy}-${mm}-${dd}`;
+            } else if (grouping === 'monthly') {
+                return `${yyyy}-${mm}`;
+            } else if (grouping === 'yearly') {
+                return `${yyyy}`;
+            } else if (grouping === 'weekly') {
+                const startOfYear = new Date(yyyy, 0, 1);
+                const pastDaysOfYear = (parsedDate - startOfYear) / 86400000;
+                const weekNum = Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
+                return `${yyyy}-W${String(weekNum).padStart(2, '0')}`;
+            }
+            return `${yyyy}-${mm}-${dd}`; // fallback
+        }
+
+        function processValidation(data) {
+            const totalRequests = data.length;
+            let countOpen = 0;
+            let countClose = 0;
+            
+            const deptCounts = {};
+            const trendData = {};
+            const trendGrouping = document.getElementById('trendGrouping').value;
+
+            data.forEach(row => {
+                let isClose = false;
+                let isOpen = false;
+                
+                // 1. Cek kolom spesifik yang bernama "Status", "Progress", dll
+                let statusKey = Object.keys(row).find(k => {
+                    let kl = k.trim().toLowerCase();
+                    return kl === 'status' || kl.includes('progress') || kl.includes('proggres') || kl === 'state' || kl.includes('valid') || kl === 'ket' || kl === 'keterangan';
+                });
+
+                if (statusKey && row[statusKey]) {
+                    const val = String(row[statusKey]).toLowerCase().trim();
+                    if (['close', 'closed', 'selesai', 'done', 'completed', 'valid', 'validated', 'approve', 'approved', 'success', 'true', 'yes', 'y', 'ok', 'match', 'matched', 'sesuai', '1', 'aktif', 'active', 'clear', 't'].includes(val)) {
+                        isClose = true;
+                    } else if (['open', 'pending', 'in progress', 'invalid', 'reject', 'rejected', 'false', 'no', 'n', '0', 'belum', 'f', 'not valid'].includes(val)) {
+                        isOpen = true;
+                    }
+                }
+
+                // 2. Cek apakah ada tanggal penyelesaian/selesai yang terisi jika step 1 gagal
+                if (!isClose && !isOpen) {
+                    const closedDateKey = Object.keys(row).find(k => {
+                        let kl = k.trim().toLowerCase();
+                        return kl.includes('selesai') || kl.includes('close date') || kl.includes('waktu penyelesaian') || kl.includes('end date') || kl.includes('tanggal valid') || kl.includes('time stamp');
+                    });
+                    if (closedDateKey) {
+                        if (row[closedDateKey] && String(row[closedDateKey]).trim() !== '') isClose = true;
+                        else isOpen = true;
+                    }
+                }
+
+                // 3. Pindai seluruh sel sebagai fallback super luas
+                if (!isClose && !isOpen) {
+                    Object.values(row).forEach(val => {
+                        if (val === null || val === undefined) return;
+                        const str = String(val).toLowerCase().trim();
+                        if (['close', 'closed', 'selesai', 'done', 'completed', 'valid', 'validated', 'approve', 'approved', 'success', 'true', 'yes', 'y', 'ok', 'match', 'matched', 'sesuai', '1', 'aktif', 'active', 'clear'].includes(str)) isClose = true;
+                        if (['open', 'pending', 'in progress', 'invalid', 'reject', 'rejected', 'false', 'no', 'n', '0', 'belum'].includes(str)) isOpen = true;
+                    });
+                }
+
+                // 4. Default penentuan akhir
+                if (isClose) {
+                    countClose++;
+                    row['_internalStatus'] = 'Close';
+                } else {
+                    countOpen++; // Default ke Open jika tidak ada jejak validasi
+                    row['_internalStatus'] = 'Open';
+                }
+
+                const dept = row['Dept'] || row['Department'] || row['Departemen'] || 'Unknown';
+                deptCounts[dept] = (deptCounts[dept] || 0) + 1;
+
+                if (row['Timestamp']) {
+                    const parsedDate = parseCustomDate(row['Timestamp']);
+                    if (!isNaN(parsedDate)) {
+                        const dateKey = getGroupingKey(parsedDate, trendGrouping);
+
+                        if (!trendData[dateKey]) trendData[dateKey] = { total: 0, closeCount: 0 };
+                        
+                        trendData[dateKey].total++;
+                        if (isClose) trendData[dateKey].closeCount++;
+                    }
+                }
+            });
+
+            const percentClose = totalRequests > 0 ? (countClose / totalRequests * 100).toFixed(3) : "0.000";
+            const percentOpen = totalRequests > 0 ? (countOpen / totalRequests * 100).toFixed(3) : "0.000";
+
+            // Update UI values
+            animateValue("valTotalReq", parseInt(document.getElementById('valTotalReq').innerText) || 0, totalRequests, 1000);
+            
+            document.getElementById('valAvgRes').innerHTML = `${countClose} <span class="text-gray-400 text-sm font-medium">Closed</span> / ${countOpen} <span class="text-gray-400 text-sm font-medium">Open</span>`;
+            document.getElementById('valAvgStatus').innerHTML = '<span class="text-gray-500 font-medium">Status Breakdown</span>';
+
+            document.getElementById('valKpiAch').innerText = `${percentClose}%`;
+            document.getElementById('barKpiAch').style.width = `${percentClose}%`;
+            
+            // Monochrome style progress
+            if (percentClose < 80) document.getElementById('barKpiAch').className = "bg-gray-400 h-1.5 rounded-full transition-all duration-1000 ease-out";
+            else document.getElementById('barKpiAch').className = "bg-black h-1.5 rounded-full transition-all duration-1000 ease-out";
+
+            // Percentage Open on 4th card
+            document.getElementById('valPending').innerText = `${percentOpen}%`;
+
+            renderValidationCharts(trendData, deptCounts, trendGrouping);
+            renderTable(data, true);
+        }
+
+        function processResponseTime(data) {
             const totalRequests = data.length;
             
             let totalResponseTime = 0;
@@ -510,14 +778,14 @@
             
             const deptCounts = {};
             const trendData = {};
+            const trendGrouping = document.getElementById('trendGrouping').value;
 
             data.forEach(row => {
                 const waktuSelesai = row['Waktu Penyelesaian'];
                 
                 if (waktuSelesai && String(waktuSelesai).trim() !== '') {
-                    row['Progress/Remarks'] = 'Done'; // Paksa status selesai jika ada waktunya
+                    row['Progress/Remarks'] = 'Done'; 
 
-                    // Kalkulasi ganda untuk mengalahkan bug format tanggal Google API
                     const startDDMM = parseDateStrict(row['Timestamp'], true);
                     const endDDMM = parseDateStrict(waktuSelesai, true);
                     const diff1 = (endDDMM - startDDMM) / (1000 * 60 * 60);
@@ -528,7 +796,6 @@
 
                     let diffJam = 0;
                     
-                    // Pilih selisih waktu yang paling logis dan positif
                     if (!isNaN(diff1) && diff1 >= 0 && diff1 <= 720) {
                         diffJam = diff1;
                     } else if (!isNaN(diff2) && diff2 >= 0 && diff2 <= 720) {
@@ -537,7 +804,6 @@
                         diffJam = (!isNaN(diff1) && diff1 >= 0) ? diff1 : ((!isNaN(diff2) && diff2 >= 0) ? diff2 : 0);
                     }
 
-                    // Paksa timpa kolom tanpa mempedulikan data lama dari spreadsheet
                     row['RESPON TIME'] = diffJam.toFixed(1);
                     row['Ach'] = diffJam <= 24 ? 'Achieved' : 'Not Achieved';
                 } else {
@@ -546,7 +812,6 @@
                     row['Ach'] = '-';
                 }
 
-                // Response Time Calculation
                 const resTime = parseFloat(row['RESPON TIME']);
                 if (!isNaN(resTime)) {
                     totalResponseTime += resTime;
@@ -556,31 +821,23 @@
                     if (resTime > maxResTime) maxResTime = resTime;
                 }
 
-                // Achievement
                 const ach = (row['Ach'] || "").toLowerCase();
                 if (ach.includes('achieved') && !ach.includes('not')) {
                     countAchieved++;
                 }
 
-                // Pending / In Progress
                 const status = (row['Progress/Remarks'] || "").toLowerCase();
                 if (status !== 'done' && status !== 'completed' && status !== 'selesai') {
                     countPending++;
                 }
 
-                // Department distribution
                 const dept = row['Dept'] || 'Unknown';
                 deptCounts[dept] = (deptCounts[dept] || 0) + 1;
 
-                // Trend mapping (using Date as key)
                 if (row['Timestamp']) {
                     const parsedDate = parseCustomDate(row['Timestamp']);
                     if (!isNaN(parsedDate)) {
-                        // Memaksa format menjadi YYYY-MM-DD murni agar sorting teks berjalan sempurna berdasarkan waktu
-                        const yyyy = parsedDate.getFullYear();
-                        const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
-                        const dd = String(parsedDate.getDate()).padStart(2, '0');
-                        const dateKey = `${yyyy}-${mm}-${dd}`;
+                        const dateKey = getGroupingKey(parsedDate, trendGrouping);
 
                         if (!trendData[dateKey]) {
                             trendData[dateKey] = { sum: 0, count: 0 };
@@ -599,7 +856,6 @@
             if (minResTime === Infinity) minResTime = 0;
             if (maxResTime === -Infinity) maxResTime = 0;
 
-            // 2. Update UI DOM Elements
             animateValue("valTotalReq", parseInt(document.getElementById('valTotalReq').innerText) || 0, totalRequests, 1000);
             
             document.getElementById('valAvgRes').innerText = avgResponseTime;
@@ -608,68 +864,47 @@
             
             const avgStatusEl = document.getElementById('valAvgStatus');
             if (avgResponseTime <= 24) {
-                avgStatusEl.innerHTML = '<i class="fas fa-arrow-down mr-1"></i> Sangat Baik (Memenuhi SLA)';
-                avgStatusEl.className = 'text-emerald-500 font-medium';
+                avgStatusEl.innerHTML = '<span class="text-gray-900 font-medium">Within SLA</span>';
             } else {
-                avgStatusEl.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i> Perlu Perhatian';
-                avgStatusEl.className = 'text-rose-500 font-medium';
+                avgStatusEl.innerHTML = '<span class="text-gray-500 font-medium">Exceeds SLA</span>';
             }
 
             document.getElementById('valKpiAch').innerText = `${kpiPercentage}%`;
             document.getElementById('barKpiAch').style.width = `${kpiPercentage}%`;
-            if (kpiPercentage < 80) document.getElementById('barKpiAch').className = "bg-rose-500 h-1.5 rounded-full";
-            else if (kpiPercentage < 95) document.getElementById('barKpiAch').className = "bg-amber-500 h-1.5 rounded-full";
-            else document.getElementById('barKpiAch').className = "bg-emerald-500 h-1.5 rounded-full";
+            
+            if (kpiPercentage < 80) document.getElementById('barKpiAch').className = "bg-gray-400 h-1.5 rounded-full transition-all duration-1000 ease-out";
+            else document.getElementById('barKpiAch').className = "bg-black h-1.5 rounded-full transition-all duration-1000 ease-out";
 
             animateValue("valPending", parseInt(document.getElementById('valPending').innerText) || 0, countPending, 1000);
 
-            // 3. Render Charts
             renderCharts(trendData, deptCounts);
-
-            // 4. Render Table
-            renderTable(data);
+            renderTable(data, false);
         }
 
-        function renderCharts(trendData, deptCounts) {
-            // Prepare Trend Chart Data
-            const sortedDates = Object.keys(trendData).sort();
-            const trendLabels = sortedDates.map(dateStr => {
-                // Memecah format YYYY-MM-DD murni dari proses sebelumnya tanpa new Date()
-                const parts = dateStr.split('-');
-                if (parts.length === 3) {
-                    return `${parseInt(parts[2], 10)}/${parseInt(parts[1], 10)}`; 
-                }
-                return dateStr;
-            });
-            const trendValues = sortedDates.map(date => {
-                return trendData[date].count > 0 ? (trendData[date].sum / trendData[date].count).toFixed(1) : 0;
-            });
-
-            // Prepare Dept Chart Data
-            const deptLabels = Object.keys(deptCounts);
-            const deptData = Object.values(deptCounts);
-
-            // Destroy existing charts to prevent duplication on refresh
+        function buildTrendChart(labels, values, valueLabel, isPercentage = false) {
             if (trendChartInstance) trendChartInstance.destroy();
-            if (deptChartInstance) deptChartInstance.destroy();
 
-            // Render Line Chart
             const ctxTrend = document.getElementById('trendChart').getContext('2d');
+            
+            let gradient = ctxTrend.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(17, 24, 39, 0.08)'); 
+            gradient.addColorStop(1, 'rgba(17, 24, 39, 0)');
+
             trendChartInstance = new Chart(ctxTrend, {
                 type: 'line',
                 data: {
-                    labels: trendLabels,
+                    labels: labels,
                     datasets: [{
-                        label: 'Avg Response Time (Jam)',
-                        data: trendValues,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        label: valueLabel,
+                        data: values,
+                        borderColor: '#111827', 
+                        backgroundColor: gradient,
                         borderWidth: 2,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#3b82f6',
+                        pointBackgroundColor: '#FFFFFF',
+                        pointBorderColor: '#111827',
                         pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
+                        pointRadius: 0, 
+                        pointHoverRadius: 5,
                         fill: true,
                         tension: 0.4
                     }]
@@ -677,116 +912,268 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    plugins: { 
+                        legend: { display: false }, 
+                        tooltip: { 
+                            mode: 'index', 
+                            intersect: false,
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            titleFont: { size: 12, family: 'Inter' },
+                            bodyFont: { size: 12, family: 'Inter' },
+                            padding: 10,
+                            cornerRadius: 6,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + (isPercentage ? '%' : ' h');
+                                    }
+                                    return label;
+                                }
+                            }
+                        } 
+                    },
                     scales: {
-                        y: { beginAtZero: true, grid: { borderDash: [2, 4], color: '#f1f5f9' }, ticks: { color: '#64748b', font: {size: 11} } },
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: {size: 11} } }
+                        y: { 
+                            beginAtZero: true, 
+                            max: isPercentage ? 100 : undefined,
+                            grid: { drawBorder: false, color: '#F3F4F6' }, 
+                            ticks: { 
+                                font: {size: 11}, padding: 10,
+                                callback: function(value) { return value + (isPercentage ? '%' : ''); }
+                            } 
+                        },
+                        x: { 
+                            grid: { display: false, drawBorder: false }, 
+                            ticks: { font: {size: 11}, padding: 10 } 
+                        }
                     },
                     interaction: { mode: 'nearest', axis: 'x', intersect: false }
                 }
             });
+        }
 
-            // Render Doughnut/Bar Chart for Dept
+        function buildDeptChart(labels, values) {
+            if (deptChartInstance) deptChartInstance.destroy();
+
             const ctxDept = document.getElementById('deptChart').getContext('2d');
+            const saasColors = ['#0F172A', '#3B82F6', '#6366F1', '#94A3B8', '#CBD5E1', '#F1F5F9'];
+            
             deptChartInstance = new Chart(ctxDept, {
                 type: 'doughnut',
                 data: {
-                    labels: deptLabels,
+                    labels: labels,
                     datasets: [{
-                        data: deptData,
-                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#64748b'],
-                        borderWidth: 0,
+                        data: values,
+                        backgroundColor: saasColors.slice(0, values.length),
+                        borderWidth: 2,
+                        borderColor: '#ffffff',
                         hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%',
+                    cutout: '75%', 
                     plugins: {
-                        legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: {size: 11, family: 'Inter'} } }
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { usePointStyle: true, boxWidth: 8, font: {size: 11, family: 'Inter'}, padding: 20 } 
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            bodyFont: { size: 12, family: 'Inter' },
+                            cornerRadius: 6
+                        }
                     }
                 }
             });
         }
 
-        function renderTable(dataToRender) {
+        function renderValidationCharts(trendData, deptCounts, grouping) {
+            const sortedKeys = Object.keys(trendData).sort();
+            const trendLabels = sortedKeys.map(key => formatTrendLabel(key, grouping));
+            
+            // For Validation, we plot % Close Progress
+            const trendValues = sortedKeys.map(key => {
+                const item = trendData[key];
+                return item.total > 0 ? ((item.closeCount / item.total) * 100).toFixed(3) : 0;
+            });
+
+            const deptLabels = Object.keys(deptCounts);
+            const deptData = Object.values(deptCounts);
+
+            buildTrendChart(trendLabels, trendValues, 'Close Progress (%)', true);
+            buildDeptChart(deptLabels, deptData);
+        }
+
+        function renderCharts(trendData, deptCounts) {
+            const grouping = document.getElementById('trendGrouping').value;
+            const sortedKeys = Object.keys(trendData).sort();
+            
+            const trendLabels = sortedKeys.map(key => formatTrendLabel(key, grouping));
+            const trendValues = sortedKeys.map(key => {
+                return trendData[key].count > 0 ? (trendData[key].sum / trendData[key].count).toFixed(1) : 0;
+            });
+
+            const deptLabels = Object.keys(deptCounts);
+            const deptData = Object.values(deptCounts);
+
+            buildTrendChart(trendLabels, trendValues, 'Average Time (h)', false);
+            buildDeptChart(deptLabels, deptData);
+        }
+
+        function formatTrendLabel(dateStr, grouping) {
+            const parts = dateStr.split('-');
+            if (grouping === 'daily' && parts.length === 3) return `${parseInt(parts[2], 10)}/${parseInt(parts[1], 10)}`; 
+            if (grouping === 'monthly' && parts.length === 2) {
+                const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                return `${months[parseInt(parts[1])-1]} '${parts[0].slice(2)}`;
+            }
+            if (grouping === 'weekly' && parts.length === 2) return `${parts[1]} '${parts[0].slice(2)}`;
+            if (grouping === 'yearly') return parts[0];
+            return dateStr;
+        }
+
+        function renderTable(dataToRender, isValidation) {
+            const thead = document.getElementById('tableHead');
             const tbody = document.getElementById('tableBody');
+            
+            // Adjust table header dynamically
+            if (isValidation) {
+                if (dataToRender.length > 0) {
+                    const keys = Object.keys(dataToRender[0]).filter(k => k !== '_internalStatus' && k !== 'Timestamp');
+                    let thHtml = `<th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider">Timestamp</th>`;
+                    keys.forEach(k => {
+                        thHtml += `<th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider">${k}</th>`;
+                    });
+                    thHtml += `<th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider text-center">Status</th>`;
+                    thead.innerHTML = `<tr>${thHtml}</tr>`;
+                } else {
+                    thead.innerHTML = `
+                        <tr>
+                            <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider">Timestamp</th>
+                            <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider">Data</th>
+                            <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider text-center">Status</th>
+                        </tr>
+                    `;
+                }
+            } else {
+                thead.innerHTML = `
+                    <tr>
+                        <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider">Timestamp</th>
+                        <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider">Material Details</th>
+                        <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider">Requester</th>
+                        <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider">Processor</th>
+                        <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider text-center">Status</th>
+                        <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider text-right">Cycle Time</th>
+                        <th class="px-6 py-3 text-xs font-medium text-gray-500 tracking-wider text-center">SLA</th>
+                    </tr>
+                `;
+            }
+
             tbody.innerHTML = '';
 
             if (dataToRender.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-slate-500">Data tidak ditemukan.</td></tr>`;
-                document.getElementById('tableInfo').innerText = `Menampilkan 0 data`;
+                tbody.innerHTML = `<tr><td colspan="10" class="px-6 py-12 text-center text-gray-500 text-sm">No matching records found.</td></tr>`;
+                document.getElementById('tableInfo').innerText = `Showing 0 records`;
                 return;
             }
 
-            // Sort by Timestamp newest first
             const sortedData = [...dataToRender].sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
             
-            sortedData.forEach(row => {
+            // Limit tampilan tabel ke 200 baris terbaru agar browser tidak freeze karena merender ratusan ribu elemen HTML
+            const displayData = sortedData.slice(0, 200);
+            
+            displayData.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors group";
+                tr.className = "hover:bg-gray-50/50 transition-colors group";
 
-                // Status Badge Logic
-                const status = (row['Progress/Remarks'] || "").toLowerCase();
-                let statusHtml = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">${row['Progress/Remarks'] || '-'}</span>`;
-                if (status === 'done' || status === 'completed') {
-                    statusHtml = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200"><i class="fas fa-check mr-1"></i> Selesai</span>`;
-                } else if (status.includes('pending') || status.includes('progress')) {
-                    statusHtml = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200"><i class="fas fa-clock mr-1"></i> Proses</span>`;
-                }
+                if (isValidation) {
+                    const status = row['_internalStatus'] || "Open";
+                    let statusHtml = `<span class="px-2 py-1 rounded text-[11px] font-medium tracking-wide bg-gray-100 text-gray-800 border border-gray-200">${status}</span>`;
+                    if (status === 'Close') {
+                        statusHtml = `<span class="px-2 py-1 rounded text-[11px] font-medium tracking-wide bg-black text-white">Closed</span>`;
+                    }
+                    
+                    const keys = Object.keys(row).filter(k => k !== 'Timestamp' && k !== '_internalStatus');
+                    let tdHtml = `
+                        <td class="px-6 py-3.5">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-900">${row['Timestamp'] ? String(row['Timestamp']).split(' ')[0] : '-'}</span>
+                                <span class="text-xs text-gray-400 mt-0.5">${row['Timestamp'] ? (String(row['Timestamp']).split(' ')[1] || '') : ''}</span>
+                            </div>
+                        </td>
+                    `;
+                    
+                    keys.forEach(k => {
+                        tdHtml += `<td class="px-6 py-3.5 text-sm font-medium text-gray-900 max-w-xs truncate" title="${row[k] || '-'}">${row[k] || '-'}</td>`;
+                    });
+                    
+                    tdHtml += `<td class="px-6 py-3.5 text-center">${statusHtml}</td>`;
+                    tr.innerHTML = tdHtml;
+                } else {
+                    // Original SaaS Status Badge (Strict Minimalist)
+                    const status = (row['Progress/Remarks'] || "").toLowerCase();
+                    let statusHtml = `<span class="px-2 py-1 rounded text-[11px] font-medium tracking-wide bg-gray-100 text-gray-500 border border-gray-200">${row['Progress/Remarks'] || '-'}</span>`;
+                    if (status === 'done' || status === 'completed') {
+                        statusHtml = `<span class="px-2 py-1 rounded text-[11px] font-medium tracking-wide bg-black text-white">Completed</span>`;
+                    } else if (status.includes('pending') || status.includes('progress')) {
+                        statusHtml = `<span class="px-2 py-1 rounded text-[11px] font-medium tracking-wide bg-gray-100 text-gray-800 border border-gray-200">In Progress</span>`;
+                    }
 
-                // Ach Badge Logic
-                const ach = (row['Ach'] || "").toLowerCase();
-                let achHtml = `<span class="text-slate-400">-</span>`;
-                if (ach.includes('achieved') && !ach.includes('not')) {
-                    achHtml = `<i class="fas fa-star text-amber-400" title="Achieved"></i>`;
-                } else if (ach.includes('not')) {
-                    achHtml = `<i class="fas fa-times-circle text-rose-400" title="Not Achieved"></i>`;
-                }
+                    // Minimalist Ach Badge (Dots)
+                    const ach = (row['Ach'] || "").toLowerCase();
+                    let achHtml = `<span class="text-gray-300">-</span>`;
+                    if (ach.includes('achieved') && !ach.includes('not')) {
+                        achHtml = `<div class="h-2 w-2 rounded-full bg-black mx-auto" title="Achieved"></div>`;
+                    } else if (ach.includes('not')) {
+                        achHtml = `<div class="h-2 w-2 rounded-full bg-gray-300 mx-auto" title="Not Achieved"></div>`;
+                    }
 
-                const materialDesc = `
-                    <div class="flex items-center gap-3">
-                        <div class="h-8 w-8 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
-                            ${row['Material'] ? row['Material'].charAt(0) : 'M'}
+                    const materialDesc = `
+                        <div class="flex items-center gap-3">
+                            <div class="flex flex-col max-w-[200px] truncate">
+                                <span class="font-medium text-gray-900 truncate" title="${row['Material']}">${row['Material'] || '-'}</span>
+                                <span class="text-xs text-gray-500 mt-0.5">Plant: <span class="font-medium text-gray-600">${row['Plant']}</span> • SLoc: <span class="font-medium text-gray-600">${row['SLoc']}</span></span>
+                            </div>
                         </div>
-                        <div class="flex flex-col max-w-[200px] truncate">
-                            <span class="font-medium text-slate-800 truncate" title="${row['Material']}">${row['Material'] || '-'}</span>
-                            <span class="text-xs text-slate-500">Plant: ${row['Plant']} | SLoc: ${row['SLoc']}</span>
-                        </div>
-                    </div>
-                `;
+                    `;
 
-                const reqDesc = `
-                    <div class="flex flex-col">
-                        <span class="font-medium text-slate-700">${row['Requester'] || '-'}</span>
-                        <span class="text-xs text-slate-500">${row['Dept'] || '-'}</span>
-                    </div>
-                `;
-
-                tr.innerHTML = `
-                    <td class="px-6 py-4">
+                    const reqDesc = `
                         <div class="flex flex-col">
-                            <span class="font-medium text-slate-700">${row['Timestamp'] ? row['Timestamp'].split(' ')[0] : '-'}</span>
-                            <span class="text-xs text-slate-500">${row['Timestamp'] ? (row['Timestamp'].split(' ')[1] || '') : ''}</span>
+                            <span class="text-sm text-gray-900">${row['Requester'] || '-'}</span>
+                            <span class="text-xs text-gray-500 mt-0.5">${row['Dept'] || '-'}</span>
                         </div>
-                    </td>
-                    <td class="px-6 py-4">${materialDesc}</td>
-                    <td class="px-6 py-4">${reqDesc}</td>
-                    <td class="px-6 py-4 text-slate-600">${row['PELAKSANA'] || '-'}</td>
-                    <td class="px-6 py-4 text-center">${statusHtml}</td>
-                    <td class="px-6 py-4 text-center font-medium ${parseFloat(row['RESPON TIME']) > 24 ? 'text-rose-600' : 'text-slate-700'}">
-                        ${row['RESPON TIME'] ? row['RESPON TIME'] + ' <span class="text-xs font-normal text-slate-400">Jam</span>' : '-'}
-                    </td>
-                    <td class="px-6 py-4 text-center text-lg">${achHtml}</td>
-                `;
+                    `;
+
+                    tr.innerHTML = `
+                        <td class="px-6 py-3.5">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-900">${row['Timestamp'] ? String(row['Timestamp']).split(' ')[0] : '-'}</span>
+                                <span class="text-xs text-gray-400 mt-0.5">${row['Timestamp'] ? (String(row['Timestamp']).split(' ')[1] || '') : ''}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-3.5">${materialDesc}</td>
+                        <td class="px-6 py-3.5">${reqDesc}</td>
+                        <td class="px-6 py-3.5 text-gray-600 text-sm">${row['PELAKSANA'] || '-'}</td>
+                        <td class="px-6 py-3.5 text-center">${statusHtml}</td>
+                        <td class="px-6 py-3.5 text-right font-medium text-sm text-gray-900">
+                            ${row['RESPON TIME'] ? row['RESPON TIME'] + ' <span class="text-xs font-normal text-gray-400">h</span>' : '-'}
+                        </td>
+                        <td class="px-6 py-3.5 text-center">${achHtml}</td>
+                    `;
+                }
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('tableInfo').innerText = `Menampilkan ${sortedData.length} data material`;
+            document.getElementById('tableInfo').innerText = `Showing ${displayData.length} of ${sortedData.length} records`;
         }
 
-        // Helper for Number Animation
         function animateValue(id, start, end, duration) {
             if (start === end) return;
             const obj = document.getElementById(id);
@@ -794,7 +1181,6 @@
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // Ease out quad
                 const easeProgress = progress * (2 - progress);
                 obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
                 if (progress < 1) {
